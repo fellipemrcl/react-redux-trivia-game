@@ -1,0 +1,11 @@
+.correct_answer {
+  background-color: rgb(6, 240, 15);
+  border: 3px solid rgb(6, 240, 15);
+  color: black;
+}
+
+.wrong_answer {
+  background-color: red;
+  border: 3px solid red;
+  color: black;
+}
