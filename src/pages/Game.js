@@ -18,9 +18,22 @@ export default class Game extends Component {
     timer: 30,
   };
 
-  async componentDidMount() {
+  componentDidMount() {
     const INTERVAL = 1000;
     this.timerMethod = setInterval(() => this.handleTimerOnScreen(), INTERVAL);
+    this.handleQuestions();
+  }
+
+  componentDidUpdate() {
+    const { timer, result } = this.state;
+    if (timer === 0 && result === false) {
+      this.setState({
+        result: true,
+      });
+    }
+  }
+
+  handleQuestions = async () => {
     const { index } = this.state;
     try {
       const token = localStorage.getItem('token');
@@ -38,16 +51,7 @@ export default class Game extends Component {
       history.push('/');
       localStorage.removeItem('token');
     }
-  }
-
-  componentDidUpdate() {
-    const { timer, result } = this.state;
-    if (timer === 0 && result === false) {
-      this.setState({
-        result: true,
-      });
-    }
-  }
+  };
 
   handleTimerOnScreen = () => {
     const { timer, isClockRunning } = this.state;
