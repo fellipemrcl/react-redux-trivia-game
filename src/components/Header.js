@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import md5 from 'crypto-js/md5';
+import { fetchGravatarImage } from '../services/index';
 
 class Header extends Component {
   render() {
     const { name, score, gravatarEmail } = this.props;
-    console.log(gravatarEmail);
-    const emailConverter = md5(gravatarEmail).toString();
-    const gravatarURL = `https://www.gravatar.com/avatar/${emailConverter}`;
+    const gravatarURL = fetchGravatarImage(gravatarEmail);
     return (
       <header>
         <img
@@ -22,21 +20,17 @@ class Header extends Component {
     );
   }
 }
-
 Header.propTypes = {
   gravatarEmail: PropTypes.string,
   name: PropTypes.string,
   score: PropTypes.number,
 };
-
 Header.defaultProps = {
   gravatarEmail: '',
   name: '',
   score: 0,
 };
-
 const mapStateToProps = (state) => ({
   ...state.player,
 });
-
 export default connect(mapStateToProps)(Header);
