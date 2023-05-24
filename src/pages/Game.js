@@ -5,7 +5,6 @@ import './Game.css';
 import { getQuestionsFromApi } from '../services';
 
 const sortNumber = 0.5;
-
 export default class Game extends Component {
   state = {
     questions: [],
@@ -16,7 +15,7 @@ export default class Game extends Component {
     isClockRunning: true,
     result: false,
     timer: 30,
-    showNext: false, // controla o botão
+    showNext: false,
   };
 
   componentDidMount() {
@@ -40,12 +39,11 @@ export default class Game extends Component {
       const token = localStorage.getItem('token');
       const response = await getQuestionsFromApi(token);
       const { results: questions } = response;
-
+      console.log(response);
       const currentQuestion = questions[index];
       const answers = [...currentQuestion.incorrect_answers,
         currentQuestion.correct_answer];
       const answersSorted = answers.sort(() => Math.random() - sortNumber);
-
       this.setState({ questions, loading: false, answersSorted });
     } catch (error) {
       const { history } = this.props;
@@ -70,20 +68,22 @@ export default class Game extends Component {
   };
 
   nextQuestion = () => {
-    // verificando se o index da pergunta e igual ao comprimento do array menos 1 se for verdadeiro será a ultima pergunta do jogo
     const { index, questions } = this.state;
     if (index === questions.length - 1) {
-      // deppois colocamos alguma mensagem
       return;
     }
-
-    this.setState((prevState) => ({
-      index: prevState.index + 1,
+    const nextIndex = index + 1;
+    const nextQuestion = questions[nextIndex];
+    const answers = [...nextQuestion.incorrect_answers, nextQuestion.correct_answer];
+    const answersSorted = answers.sort(() => Math.random() - sortNumber);
+    this.setState({
+      index: nextIndex,
       selected: false,
       result: false,
       timer: 30,
-      showNext: false, // Oculta o botão "Next" na próxima pergunta
-    }));
+      showNext: false,
+      answersSorted,
+    });
   };
 
   setColor = (answer, correctAnswer) => {
@@ -98,16 +98,13 @@ export default class Game extends Component {
   };
 
   render() {
-    const { questions, index, loading, answersSorted, timer, result } = this.state;
-    const { showNext } = this.state;
-
+    const { questions, index, loading, answersSorted, timer,
+      result, showNext } = this.state;
     if (loading) {
       return <p>Loading...</p>;
     }
-
     const { category, question, correct_answer: correctAnswer,
       incorrect_answers: incorrectAnswers } = questions[index];
-
     return (
       <div>
         <Header />
@@ -142,7 +139,6 @@ export default class Game extends Component {
     );
   }
 }
-
 Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
