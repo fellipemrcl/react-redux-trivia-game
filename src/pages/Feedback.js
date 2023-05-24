@@ -22,6 +22,13 @@ function Feedback({ ass, score, history }) {
         Play Again
 
       </button>
+      <button
+        onClick={ () => history.push('/ranking') }
+        data-testid="btn-ranking"
+      >
+        Ranking
+
+      </button>
     </div>
   );
 }
