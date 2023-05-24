@@ -16,6 +16,7 @@ export default class Game extends Component {
     isClockRunning: true,
     result: false,
     timer: 30,
+    showNext: false, // controla o botão
   };
 
   componentDidMount() {
@@ -65,7 +66,24 @@ export default class Game extends Component {
   };
 
   verifyAnswer = () => {
-    this.setState({ selected: true });
+    this.setState({ selected: true, showNext: true });
+  };
+
+  nextQuestion = () => {
+    // verificando se o index da pergunta e igual ao comprimento do array menos 1 se for verdadeiro será a ultima pergunta do jogo
+    const { index, questions } = this.state;
+    if (index === questions.length - 1) {
+      // deppois colocamos alguma mensagem
+      return;
+    }
+
+    this.setState((prevState) => ({
+      index: prevState.index + 1,
+      selected: false,
+      result: false,
+      timer: 30,
+      showNext: false, // Oculta o botão "Next" na próxima pergunta
+    }));
   };
 
   setColor = (answer, correctAnswer) => {
@@ -81,6 +99,7 @@ export default class Game extends Component {
 
   render() {
     const { questions, index, loading, answersSorted, timer, result } = this.state;
+    const { showNext } = this.state;
 
     if (loading) {
       return <p>Loading...</p>;
@@ -92,7 +111,7 @@ export default class Game extends Component {
     return (
       <div>
         <Header />
-        <p>{ timer }</p>
+        <p>{timer}</p>
         <div>
           <h1 data-testid="question-category">{category}</h1>
           <p data-testid="question-text">{question}</p>
@@ -100,8 +119,11 @@ export default class Game extends Component {
             {answersSorted.map((answer, idx) => (
               <button
                 key={ idx }
-                data-testid={ incorrectAnswers
-                  .includes(answer) ? `wrong-answer-${idx}` : 'correct-answer' }
+                data-testid={
+                  incorrectAnswers.includes(answer)
+                    ? `wrong-answer-${idx}`
+                    : 'correct-answer'
+                }
                 onClick={ this.verifyAnswer }
                 className={ this.setColor(answer, correctAnswer) }
                 disabled={ result }
@@ -109,6 +131,11 @@ export default class Game extends Component {
                 {answer}
               </button>
             ))}
+            {showNext && (
+              <button data-testid="btn-next" onClick={ this.nextQuestion }>
+                Next
+              </button>
+            )}
           </div>
         </div>
       </div>
