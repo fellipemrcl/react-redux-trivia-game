@@ -1,11 +1,13 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Header from '../components/Header';
 import './Game.css';
 import { getQuestionsFromApi } from '../services';
+import { setScoreAction } from '../redux/actions';
 
 const sortNumber = 0.5;
-export default class Game extends Component {
+class Game extends Component {
   state = {
     questions: [],
     index: 0,
@@ -39,7 +41,6 @@ export default class Game extends Component {
       const token = localStorage.getItem('token');
       const response = await getQuestionsFromApi(token);
       const { results: questions } = response;
-      console.log(response);
       const currentQuestion = questions[index];
       const answers = [...currentQuestion.incorrect_answers,
         currentQuestion.correct_answer];
@@ -69,7 +70,9 @@ export default class Game extends Component {
 
   nextQuestion = () => {
     const { index, questions } = this.state;
+    const { history } = this.props;
     if (index === questions.length - 1) {
+      history.push('/feedback');
       return;
     }
     const nextIndex = index + 1;
@@ -97,6 +100,35 @@ export default class Game extends Component {
     return '';
   };
 
+  handleScore = (answer) => {
+    const { dispatch } = this.props;
+    const { timer, questions, index } = this.state;
+    const ten = 10;
+    let questionDifficulty = 0;
+    const hardDifficulty = 3;
+    if (answer === questions[index].correct_answer) {
+      switch (questions[index].difficulty) {
+      case 'medium':
+        questionDifficulty = 2;
+        break;
+      case 'hard':
+        questionDifficulty = hardDifficulty;
+        break;
+      case 'easy':
+        questionDifficulty = 1;
+        break;
+      default:
+        break;
+      }
+      this.setState({
+        localScore: ten + (timer * questionDifficulty),
+      }, () => {
+        const { localScore } = this.state;
+        dispatch(setScoreAction(localScore));
+      });
+    }
+  };
+
   render() {
     const { questions, index, loading, answersSorted, timer,
       result, showNext } = this.state;
@@ -121,7 +153,10 @@ export default class Game extends Component {
                     ? `wrong-answer-${idx}`
                     : 'correct-answer'
                 }
-                onClick={ this.verifyAnswer }
+                onClick={ () => {
+                  this.verifyAnswer();
+                  this.handleScore(answer);
+                } }
                 className={ this.setColor(answer, correctAnswer) }
                 disabled={ result }
               >
@@ -143,4 +178,6 @@ Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
+export default connect()(Game);

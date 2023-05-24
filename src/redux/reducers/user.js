@@ -7,7 +7,6 @@ const INITIAL_STATE = {
   assertions: 0,
   settings: {},
 };
-
 const userReducer = (state = INITIAL_STATE, { type, payload }) => {
   switch (type) {
   case actionTypes.GET_USER:
@@ -16,9 +15,14 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
       gravatarEmail: payload.email,
       name: payload.name,
     };
+  case actionTypes.SET_SCORE:
+    return {
+      ...state,
+      score: state.score + payload,
+      assertions: state.assertions + 1,
+    };
   default:
     return state;
   }
 };
-
 export default userReducer;
