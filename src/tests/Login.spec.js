@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithRouterAndRedux  from '../tests/helpers/renderWith';
 
@@ -36,6 +36,7 @@ describe('Testing Login page', () => {
     userEvent.type(inputEmail, "teste@teste.com");
     expect(buttonPlay).toBeEnabled();
     userEvent.click(buttonPlay);
-    await screen.findByRole('img', {  name: /profile/i});
+    waitFor(() => expect(screen
+      .findByRole('img', {  name: /profile/i})).toBeInTheDocument())
   });
 });
