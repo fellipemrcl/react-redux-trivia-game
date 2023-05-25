@@ -27,6 +27,7 @@ describe('Testing Login page', () => {
     expect(settingsTitle).not.toBeInTheDocument();
   });
   test('should when play button is clicked', async () => {
+
     const { history } = renderWithRouterAndRedux(<App />);
     const inputName = screen.getByTestId('input-player-name');
     const inputEmail = screen.getByTestId('input-gravatar-email');
@@ -36,7 +37,7 @@ describe('Testing Login page', () => {
     userEvent.type(inputEmail, "teste@teste.com");
     expect(buttonPlay).toBeEnabled();
     userEvent.click(buttonPlay);
-    waitFor(() => expect(screen
-      .findByRole('img', {  name: /profile/i})).toBeInTheDocument())
+    await waitFor(() => screen
+      .findByRole('img', {  name: /profile/i}), {timeout: 5000})
   });
 });
