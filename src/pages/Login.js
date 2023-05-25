@@ -64,6 +64,7 @@ class Login extends Component {
       isDisabled,
       isSettingsBeingShown, isLoading } = this.state;
     console.log(isLoading);
+    const { dispatch } = this.props;
     return (
       <div>
         <label>
@@ -91,7 +92,7 @@ class Login extends Component {
           disabled={ isDisabled }
           onClick={ () => {
             this.handlePlayButton();
-            cleanScoreAction();
+            dispatch(cleanScoreAction());
           } }
           type="button"
         >

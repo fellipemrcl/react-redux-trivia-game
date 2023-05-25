@@ -14,8 +14,8 @@ class Ranking extends Component {
   }
 
   handleGoHome = () => {
-    const { history } = this.props;
-    cleanScoreAction();
+    const { dispatch, history } = this.props;
+    dispatch(cleanScoreAction());
     history.push('/');
   };
 
@@ -56,5 +56,6 @@ Ranking.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func.isRequired,
   }).isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
 export default connect()(Ranking);
