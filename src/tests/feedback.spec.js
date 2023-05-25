@@ -29,5 +29,5 @@ test('Ao clicar no botão Play Again redireciona para a página de Login', () =>
 const button = screen.getByRole('button', {  name: /Play Again/i});
 userEvent.click(button)
 
-  expect(window.history.push).toBeCalledWith('/ranking')
+  expect(window.history.push).toBeCalledWith('/')
 });
