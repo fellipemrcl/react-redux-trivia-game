@@ -21,6 +21,12 @@ const userReducer = (state = INITIAL_STATE, { type, payload }) => {
       score: state.score + payload,
       assertions: state.assertions + 1,
     };
+  case actionTypes.CLEAN_SCORE:
+    return {
+      ...state,
+      score: 0,
+      assertions: 0,
+    };
   default:
     return state;
   }

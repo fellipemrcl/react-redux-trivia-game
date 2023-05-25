@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Header from '../components/Header';
 import './Game.css';
-import { getQuestionsFromApi } from '../services';
+import { fetchGravatarImage, getQuestionsFromApi } from '../services';
 import { setScoreAction } from '../redux/actions';
 
 const sortNumber = 0.5;
@@ -24,6 +24,7 @@ class Game extends Component {
     const INTERVAL = 1000;
     this.timerMethod = setInterval(() => this.handleTimerOnScreen(), INTERVAL);
     this.handleQuestions();
+    this.initializeLocalStorage();
   }
 
   componentDidUpdate() {
@@ -34,6 +35,12 @@ class Game extends Component {
       });
     }
   }
+
+  initializeLocalStorage = () => {
+    if (!JSON.parse(localStorage.getItem('ranking'))) {
+      localStorage.setItem('ranking', JSON.stringify([]));
+    }
+  };
 
   handleQuestions = async () => {
     const { index } = this.state;
@@ -70,9 +77,13 @@ class Game extends Component {
 
   nextQuestion = () => {
     const { index, questions } = this.state;
-    const { history } = this.props;
+    const { history, name, email, score } = this.props;
     if (index === questions.length - 1) {
       history.push('/feedback');
+      const updatedRankingEntry = { name, image: fetchGravatarImage(email), score };
+      const ranking = [
+        ...JSON.parse(localStorage.getItem('ranking') ?? []), updatedRankingEntry];
+      localStorage.setItem('ranking', JSON.stringify(ranking));
       return;
     }
     const nextIndex = index + 1;
@@ -174,10 +185,18 @@ class Game extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  name: state.player.name,
+  email: state.player.gravatarEmail,
+  score: state.player.score,
+});
 Game.propTypes = {
   history: PropTypes.shape({
     push: PropTypes.func,
   }).isRequired,
   dispatch: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  email: PropTypes.string.isRequired,
+  score: PropTypes.number.isRequired,
 };
-export default connect()(Game);
+export default connect(mapStateToProps)(Game);

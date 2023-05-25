@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getTokenFromApi } from '../services/index';
-import { getUserAction } from '../redux/actions/index';
+import { cleanScoreAction, getUserAction } from '../redux/actions/index';
 
 class Login extends Component {
   state = {
@@ -89,7 +89,10 @@ class Login extends Component {
         <button
           data-testid="btn-play"
           disabled={ isDisabled }
-          onClick={ this.handlePlayButton }
+          onClick={ () => {
+            this.handlePlayButton();
+            cleanScoreAction();
+          } }
           type="button"
         >
           Play
